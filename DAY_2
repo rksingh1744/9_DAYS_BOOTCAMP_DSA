@@ -1,0 +1,111 @@
+# Q 1). WRITE A PROGRAM FOR LIFT MANAGEMENT USING QUEUE
+
+#include <stdio.h>
+#include <stdlib.h>
+
+#define MAX 10 
+
+
+typedef struct {
+    int floors[MAX];
+    int front;
+    int rear;
+} Queue;
+
+
+void initializeQueue(Queue* q) {
+    q->front = -1;
+    q->rear = -1;
+}
+
+
+int isEmpty(Queue* q) {
+    return q->front == -1;
+}
+
+
+int isFull(Queue* q) {
+    return (q->rear + 1) % MAX == q->front;
+}
+
+
+void enqueue(Queue* q, int floor) {
+    if (isFull(q)) {
+        printf("Queue is full! Cannot add more requests.\n");
+        return;
+    }
+    if (isEmpty(q)) {
+        q->front = q->rear = 0;
+    } else {
+        q->rear = (q->rear + 1) % MAX;
+    }
+    q->floors[q->rear] = floor;
+    printf("Lift request for floor %d added to the queue.\n", floor);
+}
+
+
+int dequeue(Queue* q) {
+    if (isEmpty(q)) {
+        printf("Queue is empty! No more requests.\n");
+        return -1;
+    }
+    int floor = q->floors[q->front];
+    if (q->front == q->rear) {
+        q->front = q->rear = -1;
+    } else {
+        q->front = (q->front + 1) % MAX;
+    }
+    return floor;
+}
+
+
+void displayQueue(Queue* q) {
+    if (isEmpty(q)) {
+        printf("No lift requests in the queue.\n");
+        return;
+    }
+    printf("Current lift requests: ");
+    int i = q->front;
+    while (1) {
+        printf("%d ", q->floors[i]);
+        if (i == q->rear) {
+            break;
+        }
+        i = (i + 1) % MAX;
+    }
+    printf("\n");
+}
+
+
+void liftOperation(Queue* q) {
+    while (!isEmpty(q)) {
+        int currentFloor = dequeue(q);
+        if (currentFloor != -1) {
+            printf("Lift moving to floor %d\n", currentFloor);
+        }
+    }
+    printf("All lift requests have been served.\n");
+}
+
+int main() {
+    Queue liftQueue;
+    initializeQueue(&liftQueue);
+
+   
+    enqueue(&liftQueue, 3);
+    enqueue(&liftQueue, 7);
+    enqueue(&liftQueue, 1);
+    enqueue(&liftQueue, 5);
+    displayQueue(&liftQueue);
+
+    printf("\nStarting lift operations...\n");
+    liftOperation(&liftQueue);
+    displayQueue(&liftQueue);
+
+    return 0;
+}
+
+
+
+
+
